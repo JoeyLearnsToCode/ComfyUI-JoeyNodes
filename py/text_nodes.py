@@ -9,9 +9,9 @@ class RemoveCommentedText:
         return {
             "required": {
                 "text": ("STRING", {"multiline": True, "forceInput": True}),
-                "line_comment": ("STRING", {"multiline": False, "default": "#"}),
-                "block_comment_start": ("STRING", {"multiline": False, "default": "##"}),
-                "block_comment_end": ("STRING", {"multiline": False, "default": "##"}),
+                "line_comment_prefix": ("STRING", {"multiline": False, "default": "#"}),
+                "block_comment_prefix": ("STRING", {"multiline": False, "default": "##"}),
+                "block_comment_suffix": ("STRING", {"multiline": False, "default": "##"}),
             }
         }
 
@@ -20,20 +20,24 @@ class RemoveCommentedText:
     CATEGORY = "text"
     
     def remove_commented_text(
-            self, text, line_comment, block_comment_start, block_comment_end):
-        # Remove text enclosed in comment decorators
-        text = re.sub(rf'{re.escape(block_comment_start)}[\s\S]+?{re.escape(block_comment_end)}', '', text)
+            self, text, line_comment_prefix, block_comment_prefix, block_comment_suffix):
+        # 检查块注释参数是否有效（trim后不为空）
+        if block_comment_prefix.strip() and block_comment_suffix.strip():
+            # Remove text enclosed in comment decorators
+            text = re.sub(rf'{re.escape(block_comment_prefix)}[\s\S]+?{re.escape(block_comment_suffix)}', '', text)
+            
+            # Then actually remove the decorators
+            text = text.replace(f"{re.escape(block_comment_prefix)}{re.escape(block_comment_suffix)}", "")
         
-        # Then actually remove the decorators
-        text = text.replace(f"{re.escape(block_comment_start)}{re.escape(block_comment_end)}", "")
-        
-        # Remove lines that start with a single "#"
-        lines = text.split("\n")
-        
-        # Skip lines that are commented out, empty, or just a comma
-        non_commented_lines = [line for line in lines if not line.strip().startswith(line_comment)]
-        
-        # Join the non-commented lines back into a single string
-        return_text = "\n".join(non_commented_lines)
+        # 检查行注释参数是否有效（trim后不为空）
+        if line_comment_prefix.strip():
+            # Remove lines that start with line comment
+            lines = text.split("\n")
+            
+            # Skip lines that are commented out, empty, or just a comma
+            non_commented_lines = [line for line in lines if not line.strip().startswith(line_comment_prefix)]
+            
+            # Join the non-commented lines back into a single string
+            text = "\n".join(non_commented_lines)
 
-        return (return_text,)
+        return (text,)
