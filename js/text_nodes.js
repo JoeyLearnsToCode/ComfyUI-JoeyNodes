@@ -1,0 +1,45 @@
+// js/text_nodes.js
+
+import { app } from "/scripts/app.js";
+
+app.registerExtension({
+    name: "JoeyNodes.TextNodes",
+    async nodeCreated(node, app) {
+        // 检查当前节点是否是 RemoveCommentedText
+        if (node.comfyClass === "RemoveCommentedText") {
+            // 获取三个输入框的 widget
+            const lineCommentWidget = node.widgets.find(w => w.name === "line_comment_prefix");
+            const blockCommentPrefixWidget = node.widgets.find(w => w.name === "block_comment_prefix");
+            const blockCommentSuffixWidget = node.widgets.find(w => w.name === "block_comment_suffix");
+
+            // 定义默认值
+            const defaults = {
+                line_comment_prefix: "#",
+                block_comment_prefix: "##",
+                block_comment_suffix: "##"
+            };
+
+            // 添加 reset 按钮
+            node.addWidget(
+                "button",      // widget 类型
+                "Reset",       // 按钮上显示的文字
+                null,          // 初始值 (对于按钮来说不需要)
+                () => {        // 点击按钮时触发的回调函数
+                    // 重置各个输入框为默认值
+                    if (lineCommentWidget) {
+                        lineCommentWidget.value = defaults.line_comment_prefix;
+                    }
+                    if (blockCommentPrefixWidget) {
+                        blockCommentPrefixWidget.value = defaults.block_comment_prefix;
+                    }
+                    if (blockCommentSuffixWidget) {
+                        blockCommentSuffixWidget.value = defaults.block_comment_suffix;
+                    }
+                    
+                    // 标记节点已被修改，触发 ComfyUI 更新
+                    node.setDirtyCanvas(true);
+                }
+            );
+        }
+    },
+});

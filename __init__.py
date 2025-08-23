@@ -1,10 +1,10 @@
 from .py.text_nodes import *
 from .py.openai_api_nodes import ChatCompletionsNode, ImageGenerationsNode
 
-__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
+__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
 
 # Set the web directory, any .js file in that directory will be loaded by the frontend as a frontend extension
-# WEB_DIRECTORY = "./somejs"
+WEB_DIRECTORY = "./js"
 
 # A dictionary that contains all nodes you want to export with their names
 # NOTE: names should be globally unique
