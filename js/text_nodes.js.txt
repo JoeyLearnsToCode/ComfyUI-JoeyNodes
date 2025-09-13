@@ -23,7 +23,7 @@ app.registerExtension({
             node.addWidget(
                 "button",      // widget 类型
                 "Reset",       // 按钮上显示的文字
-                null,          // 初始值 (对于按钮来说不需要)
+                "buttonValue",          // 初始值 (对于按钮来说不需要)
                 () => {        // 点击按钮时触发的回调函数
                     // 重置各个输入框为默认值
                     if (lineCommentWidget) {
